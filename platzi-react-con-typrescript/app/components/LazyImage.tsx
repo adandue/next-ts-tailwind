@@ -1,11 +1,14 @@
 //generate a random function between 1 and 123
 import { useRef, useEffect, useState } from 'react'
-type Props = { image:string}
+import type { ImgHTMLAttributes } from 'react'
+type LazyImageProps = { src:string }
+type ImageNative = ImgHTMLAttributes<HTMLImageElement>
+type Props = LazyImageProps & ImageNative
 
-export const RandomFox = ({ image }: Props): JSX.Element => {
+export const LazyImage = ({ src, ...imgProps }: Props): JSX.Element => {
 
     const node = useRef<HTMLImageElement>(null)//Los argumentos vacíos siempre se inician en null con TS
-    const [src, setSrc] = useState(
+    const [currentSrc, setCurrentSrc] = useState(
         "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjMyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB2ZXJzaW9uPSIxLjEiLz4="
     )
     
@@ -16,7 +19,7 @@ export const RandomFox = ({ image }: Props): JSX.Element => {
             entries.forEach(entry => {
                 //onIntersection => console.log
                 if (entry.isIntersecting) {
-                    setSrc(image)
+                    setCurrentSrc(src)
                 }
             });
         });
@@ -33,14 +36,14 @@ export const RandomFox = ({ image }: Props): JSX.Element => {
             observer.disconnect()
         }
 
-    }, [image]);
+    }, [src]);
+
+
 
     return <img 
                 ref={node} 
-                width={320} 
-                height="auto" 
-                className="rounded-xl bg-gray-300"
-                src={src} 
-                alt='random fox image' 
-                /> 
+                src={currentSrc} 
+                alt='random fox image'
+                {...imgProps}
+                />
 }
