@@ -2,25 +2,24 @@
 import type { MouseEventHandler } from 'react'
 import { LazyImage } from "./components/LazyImage";
 
-const random = () : number => Math.floor(Math.random() * 123) + 1;
 
 //generate simple unique id
-const generateId = () => Math.random().toString(36).substr(2, 9)
-
-type ImageItem = { id: string, url: string }
-
+const generateId = (): string => {
+  return(
+    Math.random().toString(36).substring(2, 15) +
+    Math.random().toString(36).substring(2, 15)
+  )}
+  
+  // random number from 1 to 122
+  const random = () : number => Math.floor(Math.random() * 123) + 1;
+  
 export default function Home() {
-  const [images, setImages] = useState<Array<ImageItem>>([]);
+  const [images, setImages] = useState<Array<IFoxImageItem>>([]);
 
-  const addNewFox: MouseEventHandler<HTMLButtonElement> = (event) => {
-    const newImageItem: ImageItem = { 
-      id:generateId(), 
-      url:`https://randomfox.ca/images/${random()}.jpg`}
-    
-      setImages([
-        ...images,
-        newImageItem
-      ]);
+  const addNewFox: MouseEventHandler<HTMLButtonElement> = () => { 
+      const id = generateId();
+      const url=`https://randomfox.ca/images/${random()}.jpg`;
+      setImages([...images, {id, url}])
   }
 
   return (
@@ -28,16 +27,25 @@ export default function Home() {
       <h1 className="text-3xl font-bold underline">
         Hello Platzi!
       </h1>
-      <button onClick={addNewFox}>Add new fox</button>
-      {images.map(({id, url}) => (
+      <div className="m-4">
+        <button onClick={addNewFox}
+        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
+        >
+          Add new fox
+        </button>
+      </div>
+      {images.map(({id, url}, index) => (
           <div className="p-4" key={id}>
             <LazyImage 
               src={url}
               width={320}
               height='auto'
               title='Random Fox' 
-              className="rounded-lg bg-gray-300"
-              onClick={() => console.log('hey')} 
+              className="mx-auto rounded-lg bg-gray-300"
+              onClick={() => console.log('hey')}
+              onLazyLoad={(img) => {
+                console.log(`Image #${index + 1} cargada. Nodo:`, img)
+              }}
               />
           </div>
       ))}
